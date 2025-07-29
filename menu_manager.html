@@ -1,0 +1,73 @@
+<!-- frontend/menu_manager.html -->
+<!DOCTYPE html>
+<html lang="en" xml:lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menu Manager</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    input, button { margin: 5px; }
+  </style>
+</head>
+<body>
+  <nav>
+  <a href="dashboard.html">Dashboard</a>
+  <a href="menu_manager.html">Menu Manager</a>
+  <a href="order_interface.html">Orders</a>
+  <a href="login.html">Logout</a>
+</nav>
+<body>
+  <h2>Menu Manager</h2>
+  <form id="menuForm">
+    <input type="text" id="name" placeholder="Name" required>
+    <input type="number" id="price" placeholder="Price" required>
+    <input type="text" id="category" placeholder="Category">
+    <input type="text" id="description" placeholder="Description">
+    <input type="text" id="imagePath" placeholder="Image URL">
+    <button type="submit">Add Item</button>
+  </form>
+  <ul id="menuList"></ul>
+
+  <script>
+    const form = document.getElementById('menuForm');
+    const list = document.getElementById('menuList');
+
+    function loadMenu() {
+      fetch('http://localhost:8080/api/menu')
+        .then(res => res.json())
+        .then(items => {
+          list.innerHTML = '';
+          items.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = `${item.name} - $${item.price}`;
+            list.appendChild(li);
+          });
+        });
+    }
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const item = {
+        name: form.name.value,
+        price: parseFloat(form.price.value),
+        category: form.category.value,
+        description: form.description.value,
+        imagePath: form.imagePath.value
+      };
+
+      fetch('http://localhost:8080/api/menu', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(item)
+      })
+      .then(() => {
+        form.reset();
+        loadMenu();
+      });
+    });
+
+    loadMenu();
+  </script>
+</body>
+</html>

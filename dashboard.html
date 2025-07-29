@@ -1,0 +1,40 @@
+<!-- frontend/dashboard.html -->
+<!DOCTYPE html>
+<html lang="en" xml:lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav>
+  <a href="dashboard.html">Dashboard</a>
+  <a href="menu_manager.html">Menu Manager</a>
+  <a href="order_interface.html">Orders</a>
+  <a href="login.html">Logout</a>
+</nav>
+  <h1>Welcome to ERMS Dashboard</h1>
+  <ul>
+    <li><a href="menu_manager.html">Manage Menu</a></li>
+    <li><a href="order_interface.html">Order Interface</a></li>
+    <li><a href="login.html">Logout</a></li>
+  </ul>
+
+  <h2>Recent Orders</h2>
+  <ul id="orderSummary"></ul>
+
+  <script>
+    fetch("http://localhost:8080/api/orders")
+      .then(res => res.json())
+      .then(data => {
+        const ul = document.getElementById("orderSummary");
+        data.slice(-5).reverse().forEach(order => {
+          const li = document.createElement("li");
+          li.textContent = `${order.menuItem.name} - ${order.quantity} (${order.status})`;
+          ul.appendChild(li);
+        });
+      });
+  </script>
+</body>
+</html>
